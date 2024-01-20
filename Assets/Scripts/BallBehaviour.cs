@@ -4,21 +4,13 @@ using UnityEngine;
 
 public class BallBehaviour : MonoBehaviour
 {
-    private float lifeTime = 0f;
-    private float maxLifeTime = 3.0f;
+    private float shootSpeed = 25.0f;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        lifeTime += Time.deltaTime;
-        if(lifeTime > maxLifeTime)
+        if(this.transform.position.z > 2)
         {
+            FindObjectOfType<GameManager>().combo = 0;
             Destroy(this.gameObject);
         }
     }
@@ -34,6 +26,6 @@ public class BallBehaviour : MonoBehaviour
 
     public void shoot(Vector3 dir)
     {
-        GetComponent<Rigidbody>().velocity = dir;
+        GetComponent<Rigidbody>().velocity = dir * shootSpeed;
     }
 }

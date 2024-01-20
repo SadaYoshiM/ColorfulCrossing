@@ -1,21 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BlockBehaviour : MonoBehaviour
 {
+    private GameManager gameManager;
     private int x, y;
-    // Start is called before the first frame update
     void Start()
     {
         x = getCoordinateX(this.transform.position.x);
         y = getCoordinateY(this.transform.position.y);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        GameObject mngr = GameObject.Find("GameManager");
+        gameManager = mngr.GetComponent<GameManager>();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -23,15 +20,33 @@ public class BlockBehaviour : MonoBehaviour
         if(collision.gameObject.tag == "Ball")
         {
             //Effect
-            GameManager gameManeger;
-            GameObject obj = GameObject.Find("GameManager");
-            gameManeger = obj.GetComponent<GameManager>();
-            gameManeger.breakBlocks[x, y] = true;
-            Destroy(this.gameObject);
-        }
-        if(collision.gameObject.tag == "Block")
-        {
-            Destroy(this.gameObject);
+            gameManager.breakBlocks[y, x] = true;
+
+            if(this.gameObject.GetComponent<Renderer>().material.color == collision.gameObject.GetComponent<Renderer>().material.color)
+            {
+                //ŽüˆÍ‚àÁ‚·
+                if(x + 1 >= 0 && x + 1 <= 3)
+                {
+                    gameManager.breakBlocks[y, x + 1] = true;
+                }
+                if (x - 1 >= 0 && x - 1 <= 3)
+                {
+                    gameManager.breakBlocks[y, x - 1] = true;
+                }
+                if (y + 1 >= 0 && y + 1 <= 3)
+                {
+                    gameManager.breakBlocks[y + 1, x] = true;
+                }
+                if (y - 1 >= 0 && y - 1 <= 3)
+                {
+                    gameManager.breakBlocks[y - 1, x] = true;
+                }
+                FindObjectOfType<GameManager>().combo += 1;
+            }
+            else
+            {
+                FindObjectOfType<GameManager>().combo = 1;
+            }
         }
     }
 
