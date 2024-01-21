@@ -21,13 +21,15 @@ public class GameManager : MonoBehaviour
     public GameObject Block;
     public Text BallQueueText;
     public Text TimerText;
+    public Text ComboText;
+    public GameObject Canvas;
+    public GameObject DynamicText;
     public int score;
     public int combo = 0;
 
     private const int spawnPointSize = 17;
     private const int colorSize = 4;
     private const int listSize = 5;
-    //private float ballSpeed = 25.0f;
     private float flashSpeed = 3.0f;
     private float timer;
 
@@ -38,6 +40,10 @@ public class GameManager : MonoBehaviour
     private float parameterY = 0.15f;
     private float parameterZ = -0.32f;
     private Vector3 shootDirModifier;
+    private Vector3[,] dynamicScorePos = { { new Vector3(-115, 150, 0), new Vector3(-40, 150, 0), new Vector3(40, 150, 0), new Vector3(115, 150, 0) },
+                                          { new Vector3(-115, 75, 0), new Vector3(-40, 75, 0), new Vector3(40, 75, 0), new Vector3(115, 75, 0) },
+                                          { new Vector3(-115, 0, 0), new Vector3(-40, 0, 0), new Vector3(40, 0, 0), new Vector3(115, 0, 0) },
+                                          { new Vector3(-115, -75, 0), new Vector3(-40, -75, 0), new Vector3(40, -75, 0), new Vector3(115, -75, 0) },};
 
     void Start()
     {
@@ -84,7 +90,13 @@ public class GameManager : MonoBehaviour
         if (score > 0)
         {
             Debug.Log("combo : " + combo + " score : " + score);
-            FindObjectOfType<Score>().AddScore(score * combo);
+            FindObjectOfType<Score>().AddScore(score, combo);
+            if(combo > 0 && combo % 10 == 0)
+            {
+                generateDynamicText("COMBO BONUS +" + (combo * 10).ToString(), new Vector3(-385f, 60f, 0f));
+            }
+            ComboText.text = "Combo : " + combo.ToString();
+
         }
 
         if(colorlist.Count <= 0)
@@ -257,9 +269,8 @@ public class GameManager : MonoBehaviour
                 if (breakBlocks[i, j] && blocks[i, j] != null)
                 {
                     score += 10;
-                    //
-                    blocks[i, j].SetActive(false);
-                    blocks[i, j] = null;
+                    generateDynamicText("+10", dynamicScorePos[i, j]);
+                    Destroy(blocks[i, j]);
                 }
             }
         }
@@ -280,12 +291,20 @@ public class GameManager : MonoBehaviour
         if(count == spawnPointSize - 1)
         {
             Debug.Log("Perfect!");
-            FindObjectOfType<Score>().AddScore(100);
+            generateDynamicText("PERFECT BONUS +100", new Vector3(-375f, 30f, 0f));
+            FindObjectOfType<Score>().AddScore(100, 0);
             return true;
         }
         return false;
     }
 
+    void generateDynamicText(string text, Vector3 pos)
+    {
+        GameObject dynamicText = Instantiate(DynamicText);
+        dynamicText.transform.SetParent(Canvas.transform, false);
+        dynamicText.GetComponent<Text>().text = "<b><color=#ffa500ff>" + text + "</color></b>";
+        dynamicText.GetComponent<Text>().transform.position += pos;
+    }
 
     IEnumerator DelayCoroutine(float time)
     {

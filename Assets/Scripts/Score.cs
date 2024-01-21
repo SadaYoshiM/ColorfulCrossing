@@ -44,10 +44,21 @@ public class Score : MonoBehaviour
         ScoreText.text = score.ToString();
     }
 
-    public void AddScore(int point)
+    public void AddScore(int point, int combo)
     {
-        score += point;
-        Debug.Log("Add Score : " + point);
+        int comboScore = ComboPoint(combo);
+        score += point + comboScore;
+        Debug.Log("Add Score : " + (point + comboScore).ToString());
+    }
+
+    int ComboPoint(int combo)
+    {
+        if(combo > 0 && combo % 10 == 0)
+        {
+            Debug.Log(combo.ToString() + "Combo!");
+            return combo * 10;
+        }
+        return combo;
     }
 
     Color Flash(Color color)

@@ -45,7 +45,7 @@ public class BlockBehaviour : MonoBehaviour
             }
             else
             {
-                FindObjectOfType<GameManager>().combo = 1;
+                FindObjectOfType<GameManager>().combo = 0;
             }
         }
     }
