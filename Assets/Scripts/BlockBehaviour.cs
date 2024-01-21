@@ -20,6 +20,7 @@ public class BlockBehaviour : MonoBehaviour
         if(collision.gameObject.tag == "Ball")
         {
             //Effect
+
             gameManager.breakBlocks[y, x] = true;
 
             if(this.gameObject.GetComponent<Renderer>().material.color == collision.gameObject.GetComponent<Renderer>().material.color)

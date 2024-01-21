@@ -9,7 +9,7 @@ public class Score : MonoBehaviour
     public Text ScoreText;
     public Text HighScoreText;
 
-    private int score;
+    public int score;
     private int highScore;
     private float time;
     private float flashSpeed = 5.0f;
@@ -29,19 +29,22 @@ public class Score : MonoBehaviour
         if(highScore < score)
         {
             textColor = Flash(textColor);
-            textColorCode = UnityEngine.ColorUtility.ToHtmlStringRGB(textColor);
+            textColorCode = ColorUtility.ToHtmlStringRGB(textColor);
         }
         ScoreText.text = "Score : <color=#" + textColorCode + ">" + score.ToString() + "</color>";
         HighScoreText.text = "High Score : " + highScore.ToString();
     }
 
-    void Initialize()
+    public void Initialize()
     {
         score = 0;
         time = 0;
         textColor = Color.white;
         highScore = PlayerPrefs.GetInt(highScoreKey, 0);
-        ScoreText.text = score.ToString();
+        ScoreText.text = "Score : " + score.ToString();
+        ScoreText.color = Color.white;
+        HighScoreText.text = "High Score : " + highScore.ToString();
+        textColorCode = "FFFFFF";
     }
 
     public void AddScore(int point, int combo)
@@ -71,7 +74,27 @@ public class Score : MonoBehaviour
 
     public void Save()
     {
+        highScore = score;
         PlayerPrefs.SetInt(highScoreKey, highScore);
         PlayerPrefs.Save();
+    }
+
+    public bool scoreCompare()
+    {
+        if(score > highScore)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public void setScore(int setScore)
+    {
+        score = setScore;
+    }
+
+    public string getScore()
+    {
+        return score.ToString();
     }
 }

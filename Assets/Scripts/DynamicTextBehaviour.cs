@@ -6,7 +6,7 @@ public class DynamicTextBehaviour : MonoBehaviour
 {
     private float lifeTime;
     private float maxLifeTime = 0.7f;
-    private float constSpeed = 0.15f;
+    private float constSpeed = 0.015f;
     // Start is called before the first frame update
     void Start()
     {

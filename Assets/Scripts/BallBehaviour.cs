@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class BallBehaviour : MonoBehaviour
 {
-    private float shootSpeed = 25.0f;
+    private float shootSpeed = 20.0f;
+
+    void Start()
+    {
+
+    }
 
     void Update()
     {
