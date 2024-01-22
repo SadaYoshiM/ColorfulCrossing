@@ -7,45 +7,44 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    // public
     public enum GameState
     {
         Opening,
         Playing,
         Over
     }
-    private GameState currentState = GameState.Opening;
-
     [SerializeField] GameObject[] SpawnPoint;
     [SerializeField] Material[] Materials;
-    [SerializeField] AudioSource[] audios;
+    [SerializeField] AudioSource[] Audios;
     public GameObject MainPanel;
     public GameObject OneningHTP;
     public GameObject PnayingHTP;
     public GameObject Ball;
     public GameObject Block;
+    public GameObject Canvas;
+    public GameObject DynamicText;
+    public GameObject BreakBlast;
     public Text BallQueueText;
     public Text TimerText;
     public Text ComboText;
-    public GameObject Canvas;
-    public GameObject DynamicText;
     public int score;
     public int combo = 0;
+    public bool[,] breakBlocks = new bool[(spawnPointSize - 1) / 4, (spawnPointSize - 1) / 4];
 
+    // private
+    private GameState currentState = GameState.Opening;
+    private GameObject[,] blocks = new GameObject[(spawnPointSize - 1) / 4, (spawnPointSize - 1) / 4];
+    private Queue<int> colorlist = new Queue<int>();
+    private Transform mainText;
     private const int spawnPointSize = 17;
     private const int colorSize = 4;
-    private const int listSize = 5;
-    private float flashSpeed = 3.0f;
+    private const int colorlistSize = 5;
     private float timer;
     private float gameTime = 60f;
-    private Transform mainText;
-
-    private GameObject[,] blocks = new GameObject[(spawnPointSize - 1) / 4, (spawnPointSize - 1) / 4];
-    public bool[,] breakBlocks = new bool[(spawnPointSize - 1) / 4, (spawnPointSize - 1) / 4];
     private int[,] arrangeBlocks = new int[(spawnPointSize - 1) / 4, (spawnPointSize - 1) / 4];
-    private Queue<int> colorlist = new Queue<int>();
-    private float parameterY = 0.15f;
-    private float parameterZ = -0.32f;
-    private Vector3 shootDirModifier;
+    private Vector3 shootDirModifier = new Vector3(0f, 0.15f, -0.32f);
+
     void Start()
     {
         GameOpening();
@@ -79,29 +78,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void Initialize()
-    {
-        initArrangeList();
-        generateBlocks();
-        setBalls();
-        displayBallQueueText();
-        shootDirModifier = new Vector3(0f, parameterY, parameterZ);
-        timer = 0;
-        combo = 0;
-        mainText = MainPanel.transform.GetChild(0);
-        FindObjectOfType<Score>().setScore(0);
-        ComboText.text = "Combo : " + combo.ToString();
-    }
-
-    void reload()
-    {
-        destroyAllBlocks();
-        destroyAllBalls();
-        initArrangeList();
-        generateBlocks();
-        setBalls();
-        displayBallQueueText();
-    }
 
     public void GameOpening()
     {
@@ -111,14 +87,15 @@ public class GameManager : MonoBehaviour
         MainPanel.SetActive(true);
         OneningHTP.SetActive(true);
         PnayingHTP.SetActive(false);
-        mainText.gameObject.GetComponent<Text>().text = "Press <b>SPACE</b> to Start";
+        mainText.gameObject.GetComponent<Text>().text = "Press SPACE to Start";
         mainText.gameObject.GetComponent<Text>().color = Color.white;
     }
+
     public void GamePlaying()
     {
-        if (!audios[0].isPlaying)
+        if (!Audios[0].isPlaying)
         {
-            audios[0].Play();
+            Audios[0].Play();
         }
         currentState = GameState.Playing;
         score = 0;
@@ -127,7 +104,7 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0) && colorlist.Count != 0)
         {
-            playSE(audios[1]);
+            playSE(Audios[1]);
             Vector3 spawnBallPos = SpawnPoint[16].transform.position + new Vector3(0f, 0.2f, 0.5f);
             GameObject ball = Instantiate(Ball, spawnBallPos, SpawnPoint[16].transform.rotation);
             ball.GetComponent<Renderer>().material = Materials[colorlist.Dequeue()];
@@ -145,7 +122,7 @@ public class GameManager : MonoBehaviour
             if (combo > 0 && combo % 10 == 0)
             {
                 generateDynamicText("COMBO BONUS +" + (combo * 10).ToString(), SpawnPoint[9].transform.position + new Vector3(-6.5f, 2f, 0f));
-                playSE(audios[3]);
+                playSE(Audios[3]);
             }
             ComboText.text = "Combo : " + combo.ToString();
 
@@ -163,7 +140,7 @@ public class GameManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) || checkScore())
         {
-            playSE(audios[5]);
+            playSE(Audios[5]);
             reload();
         }
     }
@@ -175,7 +152,7 @@ public class GameManager : MonoBehaviour
         if (FindObjectOfType<Score>().scoreCompare()) 
         {
             mainText.gameObject.GetComponent<Text>().text += "\nHigh Score !!";
-            playSE(audios[4]);
+            playSE(Audios[4]);
         }
         mainText.gameObject.GetComponent<Text>().color = Color.white;
         FindObjectOfType<Score>().Save();
@@ -198,6 +175,44 @@ public class GameManager : MonoBehaviour
                 GameOver();
                 break;
         }
+    }
+    public void playSE(AudioSource audio)
+    {
+        audio.Play();
+    }
+
+    public void comboReset()
+    {
+        combo = 0;
+        ComboText.text = "Combo : 0";
+    }
+
+    public void comboIncrement()
+    {
+        combo++;
+    }
+
+    void Initialize()
+    {
+        initArrangeList();
+        generateBlocks();
+        setBalls();
+        displayBallQueueText();
+        timer = 0;
+        combo = 0;
+        mainText = MainPanel.transform.GetChild(0);
+        FindObjectOfType<Score>().setScore(0);
+        ComboText.text = "Combo : " + combo.ToString();
+    }
+
+    void reload()
+    {
+        destroyAllBlocks();
+        destroyAllBalls();
+        initArrangeList();
+        generateBlocks();
+        setBalls();
+        displayBallQueueText();
     }
 
     void generateBlocks()
@@ -251,7 +266,7 @@ public class GameManager : MonoBehaviour
     {
         colorlist.Clear();
         
-        for (int i = 0; i < listSize; i++)
+        for (int i = 0; i < colorlistSize; i++)
         {
             appendColorlist();
         }
@@ -264,29 +279,14 @@ public class GameManager : MonoBehaviour
         {
             int indexC = colorlist.Dequeue();
             colorlist.Enqueue(indexC);
-            string colorcode = UnityEngine.ColorUtility.ToHtmlStringRGB(Materials[indexC].color);
-            BallQueueText.text += "<color=#" + colorcode + ">●</color>";
+            BallQueueText.text += "<color=#" + UnityEngine.ColorUtility.ToHtmlStringRGB(Materials[indexC].color) + ">●</color>";
         }
 
-        for(int i = 0; i < listSize - colorlist.Count; i++)
+        for(int i = 0; i < colorlistSize - colorlist.Count; i++)
         {
             BallQueueText.text += "<color=#C8C8C8>●</color>";
         }
-
-        if(colorlist.Count <= 0)
-        {
-            BallQueueText.color = flashColor(BallQueueText.color);
-        }
     } 
-
-    Color flashColor(Color color)
-    {
-        float time = 0;
-        time += Time.deltaTime * flashSpeed;
-        color.a = Mathf.Sin(time);
-
-        return color;
-    }
 
     void checkBlocks()
     {
@@ -297,15 +297,16 @@ public class GameManager : MonoBehaviour
                 if (breakBlocks[i, j] && blocks[i, j] != null)
                 {
                     score += 10;
-                    //Effect
-
-                    playSE(audios[2]);
+                    GameObject blast = Instantiate(BreakBlast, SpawnPoint[i * ((spawnPointSize - 1) / 4) + j].transform.position + new Vector3((1.5f - j) / 4.0f, 0.5f, -1.1f), SpawnPoint[i * ((spawnPointSize - 1) / 4) + j].transform.rotation);
+                    blast.GetComponent<ParticleSystem>().Play();
+                    playSE(Audios[2]);
                     generateDynamicText("+10", SpawnPoint[i * ((spawnPointSize - 1) / 4) + j].transform.position + new Vector3((1.5f - j) / 4.0f, 0.5f, 0f));
                     Destroy(blocks[i, j]);
                 }
             }
         }
     }
+
     bool checkScore()
     {
         int count = 0;
@@ -324,7 +325,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("Perfect!");
             generateDynamicText("PERFECT BONUS +100", SpawnPoint[9].transform.position + new Vector3(-6f, 1f, 0f));
             FindObjectOfType<Score>().AddScore(100, 0);
-            playSE(audios[3]);
+            playSE(Audios[3]);
             return true;
         }
         return false;
@@ -338,8 +339,4 @@ public class GameManager : MonoBehaviour
         dynamicText.GetComponent<Text>().transform.position += pos;
     }
 
-    public void playSE(AudioSource audio)
-    {
-        audio.Play();
-    }
 }

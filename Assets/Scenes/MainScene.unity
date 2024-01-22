@@ -1217,7 +1217,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ScoreText: {fileID: 653736383}
   HighScoreText: {fileID: 659999107}
-  score: 0
 --- !u!1 &822336031
 GameObject:
   m_ObjectHideFlags: 0
@@ -1584,7 +1583,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 6691ec79a89b45640981373395984e27, type: 2}
   - {fileID: 2100000, guid: 7a7f24d5c9e20f24ba26e33bd0acf6bd, type: 2}
   - {fileID: 2100000, guid: d8f8694aa0c5ca94aaf2c5156161d72b, type: 2}
-  audios:
+  Audios:
   - {fileID: 1040492265}
   - {fileID: 1040492268}
   - {fileID: 1040492267}
@@ -1596,11 +1595,12 @@ MonoBehaviour:
   PnayingHTP: {fileID: 188130671}
   Ball: {fileID: 6078113172941848816, guid: 422828d2c7302c44097686cf80ebffd5, type: 3}
   Block: {fileID: 6526766186148370712, guid: 8adc80a6c70b7f742b607010d3fe9003, type: 3}
+  Canvas: {fileID: 763227074}
+  DynamicText: {fileID: 7182366682880312584, guid: 46875b2564db42f4fbd2e16977b2811a, type: 3}
+  BreakBlast: {fileID: 3636370750777036147, guid: a47bd2c74342c9645ad6a58595c88d98, type: 3}
   BallQueueText: {fileID: 147629074}
   TimerText: {fileID: 822336033}
   ComboText: {fileID: 1952787398}
-  Canvas: {fileID: 763227074}
-  DynamicText: {fileID: 7182366682880312584, guid: 46875b2564db42f4fbd2e16977b2811a, type: 3}
   score: 0
   combo: 0
 --- !u!4 &1040492264

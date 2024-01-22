@@ -7,13 +7,12 @@ public class DynamicTextBehaviour : MonoBehaviour
     private float lifeTime;
     private float maxLifeTime = 0.7f;
     private float constSpeed = 0.015f;
-    // Start is called before the first frame update
+
     void Start()
     {
         lifeTime = 0;
     }
 
-    // Update is called once per frame
     void Update()
     {
         lifeTime += Time.deltaTime;

@@ -5,16 +5,12 @@ using UnityEngine;
 public class BallBehaviour : MonoBehaviour
 {
     private float shootSpeed = 20.0f;
-    void Start()
-    {
-
-    }
 
     void Update()
     {
         if(this.transform.position.z > 2)
         {
-            FindObjectOfType<GameManager>().combo = 0;
+            FindObjectOfType<GameManager>().comboReset();
             Destroy(this.gameObject);
         }
     }
@@ -23,7 +19,6 @@ public class BallBehaviour : MonoBehaviour
     {
         if(collision.gameObject.tag == "Block")
         {
-            //Effect
             Destroy(this.gameObject, 0f);
         }
     }

@@ -3,6 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/* 
+ * 座標注意(左上から、(-3, -3),(-3,-1),(-3,1),(-3,3),(-1,-3),...)
+ * y↑ □□□□
+ *     □□□□
+ *     □□□□
+ *     □□□□
+ *     　　　→x
+ * xy座標系上の(x,y)=行列での添え字(y,x)
+ */
+
 public class BlockBehaviour : MonoBehaviour
 {
     private GameManager gameManager;
@@ -19,13 +29,10 @@ public class BlockBehaviour : MonoBehaviour
     {
         if(collision.gameObject.tag == "Ball")
         {
-            //Effect
-
             gameManager.breakBlocks[y, x] = true;
 
             if(this.gameObject.GetComponent<Renderer>().material.color == collision.gameObject.GetComponent<Renderer>().material.color)
             {
-                //周囲も消す
                 if(x + 1 >= 0 && x + 1 <= 3)
                 {
                     gameManager.breakBlocks[y, x + 1] = true;
@@ -42,11 +49,11 @@ public class BlockBehaviour : MonoBehaviour
                 {
                     gameManager.breakBlocks[y - 1, x] = true;
                 }
-                FindObjectOfType<GameManager>().combo += 1;
+                FindObjectOfType<GameManager>().comboIncrement();
             }
             else
             {
-                FindObjectOfType<GameManager>().combo = 0;
+                FindObjectOfType<GameManager>().comboReset();
             }
         }
     }

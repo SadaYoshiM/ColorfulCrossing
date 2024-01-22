@@ -9,30 +9,27 @@ public class Score : MonoBehaviour
     public Text ScoreText;
     public Text HighScoreText;
 
-    public int score;
+    private int score;
     private int highScore;
     private float time;
     private float flashSpeed = 5.0f;
     private Color textColor;
     private string textColorCode;
-
     private string highScoreKey;
-    // Start is called before the first frame update
+
     void Start()
     {
         Initialize();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(highScore < score)
+        if(score > highScore)
         {
             textColor = Flash(textColor);
             textColorCode = ColorUtility.ToHtmlStringRGB(textColor);
         }
         ScoreText.text = "Score : <color=#" + textColorCode + ">" + score.ToString() + "</color>";
-        HighScoreText.text = "High Score : " + highScore.ToString();
     }
 
     public void Initialize()
@@ -40,11 +37,11 @@ public class Score : MonoBehaviour
         score = 0;
         time = 0;
         textColor = Color.white;
-        highScore = PlayerPrefs.GetInt(highScoreKey, 0);
-        ScoreText.text = "Score : " + score.ToString();
-        ScoreText.color = Color.white;
-        HighScoreText.text = "High Score : " + highScore.ToString();
         textColorCode = "FFFFFF";
+
+        ScoreText.text = "Score : " + score.ToString();
+        highScore = PlayerPrefs.GetInt(highScoreKey, 0);
+        HighScoreText.text = "High Score : " + highScore.ToString();
     }
 
     public void AddScore(int point, int combo)
@@ -74,7 +71,10 @@ public class Score : MonoBehaviour
 
     public void Save()
     {
-        highScore = score;
+        if (score > highScore)
+        {
+            highScore = score;
+        }
         PlayerPrefs.SetInt(highScoreKey, highScore);
         PlayerPrefs.Save();
     }
