@@ -297,6 +297,8 @@ public class GameManager : MonoBehaviour
                 if (breakBlocks[i, j] && blocks[i, j] != null)
                 {
                     score += 10;
+                    //Effect
+
                     playSE(audios[2]);
                     generateDynamicText("+10", SpawnPoint[i * ((spawnPointSize - 1) / 4) + j].transform.position + new Vector3((1.5f - j) / 4.0f, 0.5f, 0f));
                     Destroy(blocks[i, j]);
